@@ -1,0 +1,323 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{sigilz.math}
+
+% ----------------------------------------------------------------------------
+%
+% Options
+% =======
+
+% Disables all packages
+\newif\if@szAllowDisplayBreaks@\@szAllowDisplayBreaks@false
+\DeclareOption{allowDisplayBreaks}{\@szAllowDisplayBreaks@true}
+
+\ProcessOptions\relax
+
+% ----------------------------------------------------------------------------
+%
+% Basic symbols & macros
+% ======================
+
+\RequirePackage{cancel}                 % Slash used for cancellations
+\RequirePackage{scalerel}               % Scaling math symbols
+\RequirePackage{slashed}                % Feynman slash notation
+\RequirePackage{sigilz.upgreek}         % Upright Greek letters (if available)
+
+% Mathematical constants (upright)
+\newcommand{\E}{\mathrm e}
+\newcommand{\I}{\mathrm i}
+\newcommand{\PI}{\piup}
+
+% Special sets / types
+\newcommand{\Univ}{\mathbb U}
+\newcommand{\Cplx}{\mathbb C}
+\newcommand{\Real}{\mathbb R}
+\newcommand{\Int}{\mathbb Z}
+\newcommand{\Nat}{\mathbb N}
+
+% Special tensors / functions
+\newcommand{\Kroneckerdelta}{\deltaup}
+\newcommand{\LeviCivita}{\epsilonup}
+
+% Differential operators
+\newcommand{\D}{\operatorname{d \!}\mathord{}}
+\newcommand{\deriv}{\operatorname{D \!}\mathord{}}
+
+% Subscripted plus-or-minus / minus-or-plus sign
+\newcommand{\pmm}[1]{\underset{\scriptscriptstyle\mathsf{(#1)}}{\pm}}
+\newcommand{\mpm}[1]{\underset{\scriptscriptstyle\mathsf{(#1)}}{\mp}}
+
+% Adjoint as a prefix operator (dagger)
+\newcommand{\Adjoint}{\scalerel*{\dagger}{\textstyle\sum}}
+
+% Named parameter
+\newcommand{\param}[1]{{\scriptstyle #1 =}}
+
+% Vectors (boldface)
+\newcommand{\vc}[1]{\bm #1}
+
+% Matrices (bold)
+\newcommand{\mat}[1]{\vc{#1}}
+
+% Operators (sans-serif)
+\newcommand{\op}[1]{\mathsfx{#1}}
+\newcommand{\bop}[1]{\mathbsfx{#1}}
+
+% Equal by definition  :=  or  =:
+\providecommand{\coloneqq}{:=}
+\providecommand{\eqqcolon}{=:}
+\newcommand{\defeq}{\coloneqq}
+\newcommand{\eqdef}{\eqqcolon}
+
+% Average  <___>
+\providecommand{\avg}[1]{\langle #1 \rangle}
+\providecommand{\Avg}[1]{\left\langle #1 \right\rangle}
+
+% Absolute value  |___|
+\providecommand{\abs}[1]{\lvert #1 \rvert}
+\providecommand{\Abs}[1]{\left\lvert #1 \right\rvert}
+
+% Norm  ||___||
+\providecommand{\norm}[1]{\| #1 \|}
+\providecommand{\Norm}[1]{\left\| #1 \right\|}
+
+% Bra-vector  <___|
+\newcommand{\bra}[1]{\langle #1 \rvert}
+\newcommand{\Bra}[1]{\left\langle #1 \right\rvert}
+
+% Ket-vector  |___>
+\newcommand{\ket}[1]{\lvert #1 \rangle}
+\newcommand{\Ket}[1]{\left\lvert #1 \right\rangle}
+
+% Bra-ket  <___ | ___>
+\newcommand{\braket}[2]{\langle #1 | #2 \rangle}
+\newcommand{\Braket}[2]{\left\langle #1 \middle| #2 \right\rangle}
+
+% Bra-ket with operator  <___ | ___ | ___>
+\newcommand{\brakket}[3]{\langle #1 \rvert #2 \lvert #3 \rangle}
+\newcommand{\Brakket}[3]{\left\langle #1 \middle\rvert
+    #2 \middle\lvert #3 \right\rangle}
+
+% Commutator  [___, ___]
+\newcommand{\comm}[2]{\bigl[#1, #2\bigr]}
+
+% Anticommutator  {___, ___}
+\newcommand{\acom}[2]{\bigl\{#1, #2\bigr\}}
+
+% Normal-ordering  :___:
+\newcommand{\normord}[1]{\mathopen:#1\mathclose:}
+\newcommand{\Normord}[1]{\left:#1\right:}
+
+% Big-O notation  O(___)
+\providecommand{\bigO}[1]{\mathcal O ( #1 )}
+\providecommand{\BigO}[1]{\mathcal O \left( #1 \right)}
+
+% The macros \anh and \crt represent annihilation and creation operators
+% respectively.  The optional argument specifies the symbol used to denote the
+% operator (typically "a") while the required argument specifies the
+% subscript.
+\newcommand{\anh}[2][a]{\op{#1}_{#2}^{}}
+\newcommand{\crt}[2][a]{\op{#1}_{#2}^\dagger}
+
+% ----------------------------------------------------------------------------
+%
+% TikZ macros
+% ===========
+
+\RequirePackage{tikz}
+\usetikzlibrary{calc, shapes}
+
+% The \lcontr and \rcontr commands are used to display Wick contractions (the
+% left and right parts, respectively).  The syntax is given by:
+%
+%     \lcontr{INDEX}{OPERATOR}
+%     \rcontr[GAP]{INDEX}{OPERATOR}
+%
+% where:
+%
+% * INDEX is a unique number used to both identify and specify the height of
+%   the contraction.  The number only needs to be unique within the same
+%   product.  For best display, use natural numbers starting from one.
+%
+% * OPERATOR is the operator, e.g. \hat{a}.
+%
+% * GAP is the small gap between the operator and the end of the line.
+%   Default value is 0.03.
+%
+% Note that this will require two TeX passes to be displayed properly.
+%
+\newcommand{\lcontr}[2]{
+  \tikz[baseline = (contraction-#1-left.base), remember picture]
+  \node[inner sep = 0] (contraction-#1-left) {\ensuremath{#2}};
+}
+\newcommand{\rcontr}[3][.03]{
+  \tikz[baseline = (contraction-#2-right.base), remember picture]
+  \node[inner sep = 0] (contraction-#2-right) {\ensuremath{#3}};
+  \pgfmathsetmacro{\contractionheight}{#2 * .1}
+  \pgfmathparse{#2 > 0 ? "north" : "south"}
+  \let\contractiondirection\pgfmathresult
+  \pgfmathparse{#2 > 0 ? #1 : -#1 - .1}
+  \let\contractionoffset\pgfmathresult
+  \begin{tikzpicture}[overlay, remember picture, thick]
+    \draw    ($ (contraction-#2-left.\contractiondirection)
+                + (0, \contractionoffset) $)
+          -- ++($ (0, \contractionheight) $)
+          -| ($ (contraction-#2-right.\contractiondirection)
+                + (0, \contractionoffset) $);
+  \end{tikzpicture}
+}
+
+% The \l* and \r* creation and annihilation operators are used for displaying
+% the left and right parts of Wick contractions, respectively.  It requires a
+% mandatory numeric argument used to indentify the contraction.  See docs for
+% \lcontr and \rcontr for details.
+\newcommand{\lcreate}[2][]{\lcontr{#2}{\hat{a}}^\dagger_{#1}}
+\newcommand{\ldestro}[2][]{\lcontr{#2}{\hat{a}}^{}_{#1}}
+\newcommand{\ldestroy}[2][]{\lcontr{#2}{\hat{a}}^{}_{#1}}
+\newcommand{\rcreate}[2][]{\rcontr{#2}{\hat{a}}^\dagger_{#1}}
+\newcommand{\rdestroy}[2][]{\rcontr{#2}{\hat{a}}^{}_{#1}}
+
+% Arrows (behaves similarly to \lcontr and \rcontr).
+\newcommand{\larr}[2]{
+  \tikz[baseline = (arr-#1-left.base), remember picture]
+  \node[inner sep = 0] (arr-#1-left) {\ensuremath{#2}};
+}
+\newcommand{\rarr}[3][.03]{
+  \tikz[baseline = (arr-#2-right.base), remember picture]
+  \node[inner sep = 0] (arr-#2-right) {\ensuremath{#3}};
+  \pgfmathsetmacro{\arrheight}{#2 * .1}
+  \pgfmathparse{#2 > 0 ? "north" : "south"}
+  \let\arrdirection\pgfmathresult
+  \pgfmathparse{#2 > 0 ? #1 : -#1 - .1}
+  \let\arroffset\pgfmathresult
+  \begin{tikzpicture}[overlay, remember picture, thin, ->]
+    \draw ($ (arr-#2-left.\arrdirection) + (0, \arroffset) $)
+    to[bend left]
+    ($ (arr-#2-right.\arrdirection) + (0, \arroffset) $);
+  \end{tikzpicture}
+}
+
+% ----------------------------------------------------------------------------
+%
+% Spacing macros
+% ==============
+
+% Spacing used for aligning the start of an equation, e.g.
+%       2 (a + b)
+%     = 2 a + 2 b
+% Here, insert \eqbegin at the start of the equation.
+\newcommand{\eqbegin}{\mathrel{\phantom{=}}}
+
+% Spacing used for continuing a line-break in an equation, e.g.
+%     = 2 (a + b)
+%       - 3 (x + y)
+% Here, insert \eqcont right before the minus sign.
+\newcommand{\eqcont}{\eqbegin{}}
+
+% Invisible symbol used to align the height / position of sub- or superscripts.
+\newcommand{\phprime}{\vphantom{'}}
+
+% Real/imaginary part operators: \Re & \Im.  The original symbols (\Re & \Im)
+% are remapped to \Resymb and \Imsymb respectively.
+\let\Resymb\Re
+\let\Imsymb\Im
+\def\Re{\operatorname{Re}}
+\def\Im{\operatorname{Im}}
+
+% Misc. operators
+\DeclareMathOperator\sgn{sgn}
+\DeclareMathOperator\tr{tr}
+\DeclareMathOperator\trace{tr}
+
+% ----------------------------------------------------------------------------
+%
+% Colored tensor notation
+% =======================
+
+% Contracted index
+\definecolor{ctrcolor}{rgb}{.4, .4, .4}
+\newcommand{\ctr}[1]{\textcolor{ctrcolor}{#1}}
+
+% 4-vectors (violet bold)
+\definecolor{fvccolor}{rgb}{.4, .1, .7}
+\newcommand{\fvc}[1]{\textcolor{fvccolor}{\bm{#1}}}
+\newcommand{\fdot}{\mathbin{\fvc{\cdot}}}
+\newcommand{\fvcop}[1]{\textcolor{fvccolor}{\mathbsfx{#1}}}
+
+% rank-2 tensors in 4D (orange bold)
+\definecolor{tncolor}{rgb}{.7, .2, .1}
+\newcommand{\tn}[1]{\textcolor{tncolor}{\bm{#1}}}
+
+% rank-2 tensors in 3D (cyan)
+\definecolor{ttncolor}{rgb}{.1, .6, .6}
+\newcommand{\ttn}[1]{\textcolor{ttncolor}{\bm{#1}}}
+
+% 3-vectors (green)
+\definecolor{tvccolor}{rgb}{0, .5, .3}
+\newcommand{\tvc}[1]{\textcolor{tvccolor}{\bm{#1}}}
+\newcommand{\tdot}{\mathbin{\tvc{\cdot}}}
+\newcommand{\ttimes}{\mathbin{\tvc{\times}}}
+\newcommand{\totimes}{\mathbin{\tvc{\otimes}}}
+\newcommand{\tvcop}[1]{\textcolor{tvccolor}{\mathbsfx{#1}}}
+
+% ----------------------------------------------------------------------------
+%
+% Theorem environments
+% ====================
+
+\RequirePackage[thmmarks]{ntheorem}
+\theoremstyle{break}
+\theoremindent2em
+\theorembodyfont{}
+\theorempreskipamount1em
+\theorempostskipamount1em
+\newtheorem{lem}{Lemma}
+\newcommand{\lemref}[1]{Lem.\ \ref{lem:#1}}
+\newtheorem{cor}{Corollary}
+\newcommand{\corref}[1]{Cor.\ \ref{cor:#1}}
+\theoremstyle{nonumberbreak}
+\theoremsymbol{\ensuremath{_\blacksquare}}
+\newtheorem{proof}{Proof}
+
+% ----------------------------------------------------------------------------
+%
+% Misc. colored environments
+% ==========================
+
+% Required for boxed equations
+\RequirePackage{empheq}
+
+% Colors the text and equations blue to indicate an answer
+\definecolor{answercolor}{rgb}{0, .2, .7}
+\newenvironment{answer}{\begingroup\color{answercolor}}{\endgroup}
+
+% Final equation (in a shaded light-blue box)
+\definecolor{finalboxcolor}{rgb}{.8, .9, 1}
+\newcommand{\finalbox}[1]{%
+  \colorbox{finalboxcolor}{\hspace{1em}#1\hspace{1em}}}
+\newenvironment{finalalign*}{\begingroup\empheq[box=\finalbox
+  ]{align*}}{\endempheq\endgroup}
+\newenvironment{finalalign}{\begingroup\empheq[box=\finalbox
+  ]{align}}{\endempheq\endgroup}
+
+% Other boxed equations
+\definecolor{hicolor}{rgb}{1, .9, .6}
+\newcommand{\himath}[1]{\colorbox{hicolor}{\ensuremath{\displaystyle
+      #1}}}
+\definecolor{hicolordark}{rgb}{.8, .3, 0}
+\newcommand{\hitext}[1]{\textcolor{hicolordark}{#1}}
+\definecolor{resultboxcolor}{rgb}{.8, 1, .7}
+\newcommand{\resultmath}[1]{\colorbox{resultboxcolor}{\ensuremath{\displaystyle
+      #1}}}
+\definecolor{resultcolordark}{rgb}{.4, .8, 0}
+\newcommand{\resulttext}[1]{\textcolor{resulcolordark}{#1}}
+\newmdenv[
+    backgroundcolor=resultboxcolor,
+    innertopmargin=15,
+    linewidth=0
+]{result}
+
+% Allow equations to break across pages (globally).
+% For a local effect, wrap the macro inside \begingroup ... \endgroup.
+\if@szAllowDisplayBreaks@
+  \allowdisplaybreaks
+\fi

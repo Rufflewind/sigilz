@@ -1,0 +1,83 @@
+% GFS Neohellenic (text) / Kp-fonts (math)
+% ========================================
+
+% GFS Neohellenic (text)
+\usepackage[LGR, T1]{fontenc}
+\usepackage[default]{gfsneohellenic}
+
+% Undo the GFS Neohellenic changes to the math digits
+\DeclareMathSymbol{0}{\mathalpha}{operators}{`0}
+\DeclareMathSymbol{1}{\mathalpha}{operators}{`1}
+\DeclareMathSymbol{2}{\mathalpha}{operators}{`2}
+\DeclareMathSymbol{3}{\mathalpha}{operators}{`3}
+\DeclareMathSymbol{4}{\mathalpha}{operators}{`4}
+\DeclareMathSymbol{5}{\mathalpha}{operators}{`5}
+\DeclareMathSymbol{6}{\mathalpha}{operators}{`6}
+\DeclareMathSymbol{7}{\mathalpha}{operators}{`7}
+\DeclareMathSymbol{8}{\mathalpha}{operators}{`8}
+\DeclareMathSymbol{9}{\mathalpha}{operators}{`9}
+
+% Kpfonts (math)
+\usepackage[noDcommand, nott, notext, slantedGreeks]{kpfonts}
+\renewcommand*\ttdefault{txtt}
+
+\DeclareSymbolFont{letterssf}{OML}{jkpss}{m}{it}
+\SetSymbolFont{letterssf}{bold}{OML}{jkpss}{bx}{it}
+\DeclareSymbolFont{lettersAsf}{U}{jkpssmia}{m}{it}
+\SetSymbolFont{lettersAsf}{bold}{U}{jkpssmia}{bx}{it}
+
+\DeclareMathSymbol{\Gammasf}{\mathalpha}{lettersAsf}{00}
+\DeclareMathSymbol{\Deltasf}{\mathalpha}{lettersAsf}{01}
+\DeclareMathSymbol{\Thetasf}{\mathalpha}{lettersAsf}{02}
+\DeclareMathSymbol{\Lambdasf}{\mathalpha}{lettersAsf}{03}
+\DeclareMathSymbol{\Xisf}{\mathalpha}{lettersAsf}{04}
+\DeclareMathSymbol{\Pisf}{\mathalpha}{lettersAsf}{05}
+\DeclareMathSymbol{\Sigmasf}{\mathalpha}{lettersAsf}{06}
+\DeclareMathSymbol{\Upsilonsf}{\mathalpha}{lettersAsf}{07}
+\DeclareMathSymbol{\Phisf}{\mathalpha}{lettersAsf}{08}
+\DeclareMathSymbol{\Psisf}{\mathalpha}{lettersAsf}{09}
+\DeclareMathSymbol{\Omegasf}{\mathalpha}{lettersAsf}{10}
+\DeclareMathSymbol{\alphasf}{\mathord}{lettersAsf}{11}
+\DeclareMathSymbol{\betasf}{\mathord}{lettersAsf}{12}
+\DeclareMathSymbol{\gammasf}{\mathord}{lettersAsf}{13}
+\DeclareMathSymbol{\deltasf}{\mathord}{lettersAsf}{14}
+\DeclareMathSymbol{\epsilonsf}{\mathord}{lettersAsf}{15}
+\DeclareMathSymbol{\zetasf}{\mathord}{lettersAsf}{16}
+\DeclareMathSymbol{\etasf}{\mathord}{lettersAsf}{17}
+\DeclareMathSymbol{\thetasf}{\mathord}{lettersAsf}{18}
+\DeclareMathSymbol{\iotasf}{\mathord}{lettersAsf}{19}
+\DeclareMathSymbol{\kappasf}{\mathord}{lettersAsf}{20}
+\DeclareMathSymbol{\lambdasf}{\mathord}{lettersAsf}{21}
+\DeclareMathSymbol{\musf}{\mathord}{lettersAsf}{22}
+\DeclareMathSymbol{\nusf}{\mathord}{lettersAsf}{23}
+\DeclareMathSymbol{\xisf}{\mathord}{lettersAsf}{24}
+\DeclareMathSymbol{\pisf}{\mathord}{lettersAsf}{25}
+\DeclareMathSymbol{\rhosf}{\mathord}{lettersAsf}{26}
+\DeclareMathSymbol{\sigmasf}{\mathord}{lettersAsf}{27}
+\DeclareMathSymbol{\tausf}{\mathord}{lettersAsf}{28}
+\DeclareMathSymbol{\upsilonsf}{\mathord}{lettersAsf}{29}
+\DeclareMathSymbol{\phisf}{\mathord}{lettersAsf}{30}
+\DeclareMathSymbol{\chisf}{\mathord}{lettersAsf}{31}
+\DeclareMathSymbol{\psisf}{\mathord}{lettersAsf}{32}
+\DeclareMathSymbol{\omegasf}{\mathord}{lettersAsf}{33}
+\DeclareMathSymbol{\varepsilonsf}{\mathord}{lettersAsf}{34}
+\DeclareMathSymbol{\varthetasf}{\mathord}{lettersAsf}{35}
+\DeclareMathSymbol{\varpisf}{\mathord}{lettersAsf}{36}
+\DeclareMathSymbol{\varrhosf}{\mathord}{lettersAsf}{37}
+\DeclareMathSymbol{\varsigmasf}{\mathord}{lettersAsf}{38}
+\DeclareMathSymbol{\varphisf}{\mathord}{lettersAsf}{39}
+
+% Sans-serif style (for both Latin and Greek letters)
+\makeatletter
+\def\changegreek#1{\@for\next:={%
+  alpha,beta,gamma,delta,epsilon,zeta,eta,theta,kappa,lambda,mu,nu,xi,pi,rho,%
+  sigma,tau,upsilon,phi,chi,psi,omega,varepsilon,vartheta,varpi,varrho,%
+  varsigma,varphi,Gamma,Delta,Theta,Lambda,Xi,Pi,Sigma,Upsilon,Phi,Psi,Omega}%
+ \do{\expandafter
+     \let\csname\next\expandafter\endcsname
+     \csname\next #1\endcsname}}
+\makeatother
+\DeclareRobustCommand{\mathsfx}[1]{
+  \begingroup\changegreek{sf}\mathsf{#1}\endgroup}
+\DeclareRobustCommand{\mathbsfx}[1]{
+  \begingroup\changegreek{sf}\bm{\mathsf{#1}}\endgroup}

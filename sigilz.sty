@@ -1,0 +1,154 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{sigilz}[2013/12/10 v0.1.0 Sigilz]
+
+% ----------------------------------------------------------------------------
+%
+% Options
+% =======
+
+% Package options
+% ---------------
+
+% Don't load the default packages
+\newif\if@szNoPackages@\@szNoPackages@false
+\DeclareOption{noPackages}{\@szNoPackages@true}
+
+% Don't load sigilz.math
+\newif\if@szNoMath@\@szNoMath@false
+\DeclareOption{bm0}{\@szNoMath@true}
+
+% Loads amssymb
+\newif\if@szAmssymb@\@szAmssymb@false
+\DeclareOption{amssymb}{\@szAmssymb@true}
+
+% Font options
+% ------------
+% Note: Pick only one.
+
+% Font: Kp-fonts
+\newif\if@szFontKp@\@szFontKp@false
+\DeclareOption{font.kp}{\@szFontKp@true}
+
+% Font: GFS Neohellenic (text) / Kp-fonts (math)
+\newif\if@szFontGfskp@\@szFontGfskp@false
+\DeclareOption{font.gfskp}{\@szFontGfskp@true}
+
+% Other options
+% -------------
+
+% Enable utility functions
+\newif\if@szUtil@\@szUtil@false
+\DeclareOption{util}{\@szUtil@true}
+
+\DeclareOption*{\PassOptionsToPackage{\CurrentOption}{sigilz.math}}
+\ProcessOptions\relax
+% ----------------------------------------------------------------------------
+%
+% Details
+% =======
+
+% Load packages
+% -------------
+
+\if@szNoPackages@\else
+  \RequirePackage{amsmath}              % AMS math utilities
+  \RequirePackage{booktabs}             % Tables
+  \RequirePackage{fancybox}             % Boxed equations
+  \RequirePackage{fancyhdr}             % Headers & footers
+  \RequirePackage{isomath}              % ISO math formatting
+  \RequirePackage{mdframed}             % Framed boxes
+  \RequirePackage{microtype}            % Microtypography
+  \RequirePackage{parskip}              % No paragraph indent
+  \RequirePackage{siunitx}              % SI units
+  \RequirePackage{subcaption}           % Subfigures
+  \RequirePackage{subdepth}             % Make subscripts appear at same place
+  \RequirePackage{tikz}                 % Drawing tools
+\fi
+
+% Symbols
+% -------
+
+% AMS Symbols
+\if@szAmssymb@
+  \RequirePackage{amssymb}
+\fi
+
+% Math symbols
+\if@szNoPackages@\else
+  \if@szNoMath@\else
+    \RequirePackage{sigilz.math}
+  \fi
+\fi
+
+% Load fonts
+% ----------
+
+% Font: Kp-fonts
+\if@szFontKp@
+  \RequirePackage[T1]{fontenc}
+  \RequirePackage[noDcommand, nott, slantedGreeks]{kpfonts}
+  \renewcommand*\ttdefault{txtt}
+\fi
+
+% Font: GFS Neohellenic (text) / Kp-fonts (math)
+\if@szFontGfskp@
+  \input{sigilz.gfskp}
+\fi
+
+% Bold fonts
+% ----------
+
+% Bold symbols package.  It may consume too many math alphabets, so by default
+% the max # of fonts allowed is zero.  This may be overridden by the user for
+% a faster compilation.  This package must loaded after the fonts.
+\providecommand{\hmmax}{0}
+\providecommand{\bmmax}{0}
+\RequirePackage{bm}
+
+% Page layout & style
+% -------------------
+
+% Set height of header
+%\setlength{\headheight}{15pt}
+
+% Note: previously had [includeheadfoot] (unsure why)
+%\usepackage{geometry}
+%\pagestyle{fancy}
+
+% Equation numbering (with a diamond symbol)
+\numberwithin{equation}{section}
+\renewcommand{\theequation}{\textsf{\footnotesize
+    \ensuremath{\diamond}\arabic{equation}}}
+
+% Utility macros
+% --------------
+
+\if@szUtil@
+
+  % Prints the math fonts that are currently being used (to be used at the end
+  % of a document).
+  \newcommand{\PrintMathFonts}{%
+    \count255=0
+    \loop\ifnum\count255<16
+      (\the\count255:~\fontname\textfont\count255)
+      \advance\count255 by 1
+    \repeat
+  }
+
+\fi
+
+% Misc. tweaks
+% ------------
+
+% Allow large matrices
+\setcounter{MaxMatrixCols}{50}
+
+% Fix the spacing bug with delimiters
+\let\originalleft\left
+\let\originalright\right
+\renewcommand{\left}{\mathopen{}\mathclose\bgroup\originalleft}
+\renewcommand{\right}{\aftergroup\egroup\originalright}
+
+% Let \eqref automatically append the "eq:"
+\let\oldeqref\eqref
+\renewcommand{\eqref}[1]{\oldeqref{eq:#1}}
