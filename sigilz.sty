@@ -1,10 +1,29 @@
+% Package info
+\def\@szName{sigilz}
+\def\@szVersionMajor{0}
+\def\@szVersionMinor{2}
+\def\@szVersionPatch{0}
+
+% Initialization
+\def\@szVersion{\@szVersionMajor.\@szVersionMinor.\@szVersionPatch}
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{sigilz}[2013/12/10 v0.1.0 Sigilz]
+\ProvidesPackage{\@szName}
+\RequirePackage{xstring}
 
 % ----------------------------------------------------------------------------
 %
 % Options
 % =======
+
+% The version may be specified using any one of the following formats:
+%
+%   #
+%   #.#
+%   #.#.#
+%
+% The major version is required to match exactly, since major revisions are
+% not backward compatible.  The minor and patch versions shall be at least as
+% high as the given version, since they are backward compatible.
 
 % Package options
 % ---------------
@@ -36,11 +55,85 @@
 % Other options
 % -------------
 
-% Enable utility functions
-\newif\if@szUtil@\@szUtil@false
-\DeclareOption{util}{\@szUtil@true}
+% Macro to check if the string is an integer (without any decimal points)
+\providecommand{\IfInt}[3]{%
+  \IfSubStr{#1}{.}{%  decimal point
+    #3%
+  }{%
+    \IfStrEq{#1}{ }{% blank string
+      #3%
+    }{%
+      \IfInteger{#1}{#2}{#3}%
+    }%
+  }%
+}
 
-\DeclareOption*{\PassOptionsToPackage{\CurrentOption}{sigilz.math}}
+\DeclareOption*{
+  \newif\if@szUnknownOption@\@szUnknownOption@true
+
+  % Parse version number
+  \IfBeginWith{\CurrentOption}{v}{
+    \StrGobbleLeft{\CurrentOption}{1}[\@szReqVersion]
+  }{
+    \global\def\@szReqVersion{\CurrentOption}
+  }
+  \IfInt{\@szReqVersion}{
+    % Version is of the form: #
+    \global\def\@szReqVersionMajor{\@szReqVersion}
+    \global\def\@szReqVersionMinor{0}
+    \global\def\@szReqVersionPatch{0}
+    \@szUnknownOption@false
+  }{
+    \StrBefore{\@szReqVersion}{.}[\@szReqVersionMajor]
+    \IfInt{\@szReqVersionMajor}{
+      \StrBehind{\@szReqVersion}{.}[\@szReqVersionMinorPatch]
+      \IfInt{\@szReqVersionMinorPatch}{
+        % Version is of the form: #.#
+        \global\def\@szReqVersionMinor{\@szReqVersionMinorPatch}
+        \global\def\@szReqVersionPatch{0}
+        \@szUnknownOption@false
+      }{
+        \StrBefore{\@szReqVersionMinorPatch}{.}[\@szReqVersionMinor]
+        \StrBehind{\@szReqVersionMinorPatch}{.}[\@szReqVersionPatch]
+        \IfInt{\@szReqVersionMinor}{
+          \IfInt{\@szReqVersionPatch}{
+            % Version is of the form: #.#.#
+            \@szUnknownOption@false
+          }{}
+        }{}
+      }
+    }{}
+  }
+  \if@szUnknownOption@\else
+    % Check version
+    \ifnum\@szReqVersionMajor=\@szVersionMajor
+      \ifnum\@szReqVersionMinor>\@szVersionMinor
+        \PackageError{\@szName}{minor version not available; requested
+          [\CurrentOption] but only [\@szVersion] is available}{}
+      \else
+        \ifnum\@szReqVersionMinor=\@szVersionMinor
+          \ifnum\@szReqVersionPatch>\@szVersionPatch
+            \PackageError{\@szName}{patch version not available; requested
+              [\CurrentOption] but only [\@szVersion] is available}{}
+          \fi
+        \fi
+      \fi
+    \else
+      \PackageError{\@szName}{major version doesn't match; requested
+        [\CurrentOption] but only [\@szVersion] is available}{}
+    \fi
+  \fi
+
+  % Options for sigilz.math
+  \IfBeginWith{allowDisplayBreaks}{\CurrentOption}{%
+    \PassOptionsToPackage{\CurrentOption}{sigilz.math}
+    \@szUnknownOption@false
+  }{}
+
+  \if@szUnknownOption@
+    \PackageError{\@szName}{unknown option: `\CurrentOption'}{}
+  \fi
+}
 \ProcessOptions\relax
 % ----------------------------------------------------------------------------
 %
@@ -123,19 +216,15 @@
 % Utility macros
 % --------------
 
-\if@szUtil@
-
-  % Prints the math fonts that are currently being used (to be used at the end
-  % of a document).
-  \newcommand{\PrintMathFonts}{%
-    \count255=0
-    \loop\ifnum\count255<16
-      (\the\count255:~\fontname\textfont\count255)
-      \advance\count255 by 1
-    \repeat
-  }
-
-\fi
+% Prints the math fonts that are currently being used (to be used at the end
+% of a document).
+\providecommand{\PrintMathFonts}{%
+  \count255=0%
+  \loop\ifnum\count255<16%
+    (\the\count255:~\fontname\textfont\count255)%
+    \advance\count255 by 1%
+  \repeat
+}
 
 % Misc. tweaks
 % ------------
