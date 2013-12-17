@@ -68,7 +68,6 @@
 \DeclareMathSymbol{\varphisf}{\mathord}{lettersAsf}{39}
 
 % Sans-serif style (for both Latin and Greek letters)
-\makeatletter
 \def\changegreek#1{\@for\next:={%
   alpha,beta,gamma,delta,epsilon,zeta,eta,theta,kappa,lambda,mu,nu,xi,pi,rho,%
   sigma,tau,upsilon,phi,chi,psi,omega,varepsilon,vartheta,varpi,varrho,%
@@ -76,7 +75,6 @@
  \do{\expandafter
      \let\csname\next\expandafter\endcsname
      \csname\next #1\endcsname}}
-\makeatother
 \DeclareRobustCommand{\mathsfx}[1]{
   \begingroup\changegreek{sf}\mathsf{#1}\endgroup}
 \DeclareRobustCommand{\mathbsfx}[1]{

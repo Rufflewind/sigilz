@@ -1,7 +1,7 @@
 % Package info
 \def\@szName{sigilz}
 \def\@szVersionMajor{0}
-\def\@szVersionMinor{3}
+\def\@szVersionMinor{4}
 \def\@szVersionPatch{0}
 
 % Initialization
@@ -54,6 +54,10 @@
 
 % Other options
 % -------------
+
+% Swap the variant and regular versions of the Greek letters
+\newif\if@szSwapVarGreek@\@szSwapVarGreek@false
+\DeclareOption{swapVarGreek}{\@szSwapVarGreek@true}
 
 % Macro to check if the string is an integer (without any decimal points)
 \providecommand{\IfInt}[3]{%
@@ -241,3 +245,13 @@
 % Let \eqref automatically append the "eq:"
 \let\oldeqref\eqref
 \renewcommand{\eqref}[1]{\oldeqref{eq:#1}}
+
+% Swap the variant and regular versions of the Greek letters
+\if@szSwapVarGreek@
+  \let\sztmp\epsilon
+  \let\epsilon\varepsilon
+  \let\varepsilon\sztmp
+  \let\sztmp\phi
+  \let\phi\varphi
+  \let\varphi\sztmp
+\fi
