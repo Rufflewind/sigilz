@@ -168,13 +168,13 @@
 }
 
 % The \l* and \r* creation and annihilation operators are used for displaying
-% the left and right parts of Wick contractions, respectively.  It requires a
-% mandatory numeric argument used to indentify the contraction.  See docs for
-% \lcontr and \rcontr for details.
-\providecommand{\lcrt}[2][]{\lcontr{#2}{\hat{a}}^\dagger_{#1}}
-\providecommand{\lanh}[2][]{\lcontr{#2}{\hat{a}}^{}_{#1}}
-\providecommand{\rcrt}[2][]{\rcontr{#2}{\hat{a}}^\dagger_{#1}}
-\providecommand{\ranh}[2][]{\rcontr{#2}{\hat{a}}^{}_{#1}}
+% the left and right parts of Wick contractions, respectively.  It requires an
+% additional numeric argument used to identify the contraction.  For details,
+% see \lcontr and \rcontr.
+\providecommand{\lcrt}[3][a]{\lcontr{#3}{\op{#1}}^\dagger_{#2}}
+\providecommand{\lanh}[3][a]{\lcontr{#3}{\op{#1}}^{}_{#2}}
+\providecommand{\rcrt}[3][a]{\rcontr{#3}{\op{#1}}^\dagger_{#2}}
+\providecommand{\ranh}[3][a]{\rcontr{#3}{\op{#1}}^{}_{#2}}
 
 % Arrows (behaves similarly to \lcontr and \rcontr).
 \providecommand{\larr}[2]{
