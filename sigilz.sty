@@ -1,7 +1,7 @@
 % Package info
 \def\@szName{sigilz}
 \def\@szVersionMajor{0}
-\def\@szVersionMinor{7}
+\def\@szVersionMinor{8}
 \def\@szVersionPatch{0}
 
 % Initialization
@@ -219,6 +219,20 @@
 
 % Utility macros
 % --------------
+
+% Defines the environment if it doesn't already exist.  Same syntax as
+% `newenvironment`.  Original source:
+%
+%     http://tex.stackexchange.com/questions/20687
+%
+\def\provideenvironment{\@star@or@long\provide@environment}
+\def\provide@environment#1{%
+  \@ifundefined{#1}%
+    {\def\reserved@a{\newenvironment{#1}}}%
+    {\def\reserved@a{\renewenvironment{sz@dummy@environ}}}%
+  \reserved@a
+}
+\def\sz@dummy@environ{}
 
 % Prints the math fonts that are currently being used (to be used at the end
 % of a document).
