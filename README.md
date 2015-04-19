@@ -9,4 +9,5 @@ Quick start
 -----------
 
 To install the package, place the entire `sigilz` directory under
-`~/texmf/tex/latex` and run `texhash` to update the cache.
+`$TEXMFHOME/tex/latex` (on most systems, `TEXMFHOME` defaults to `~/texmf`),
+then run `texhash` to update the cache.
