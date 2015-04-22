@@ -8,6 +8,5 @@ LaTeX documents often have.
 Quick start
 -----------
 
-To install the package, place the entire `sigilz` directory under
-`$TEXMFHOME/tex/latex` (on most systems, `TEXMFHOME` defaults to `~/texmf`),
-then run `texhash` to update the cache.
+To install the package, copy the entire `sigilz` directory to
+`$TEXMFHOME/tex/latex`, where `TEXMFHOME` is `~/texmf` by default.
